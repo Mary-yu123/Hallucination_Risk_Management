@@ -16,8 +16,6 @@ A primary cause of LLM hallucination is ambiguity in input data and business rul
 - **Data Mesh**: Organizes and refines data into structured domains such as customer information, policy contracts, claims & complaints, vehicle information, and CRM records to provide reliable structured inputs.
 - **RAG(Retrieval-Augmented Generation)**: Retrieves only the underwriting rules relevant to the current case from official guideline documents and injects them into the model context.
 
-> RAG only vs RAG + Data Mesh 비교 결과, **RAG + Data Mesh에서 DG weight가 0일 때 ranking 성능이 최고**였습니다. 이는 별도 보정 없이도 LLM이 입력 데이터를 정확히 따라간다는, 즉 **입력 품질이 충분히 정제되어 있다**는 신호입니다.
-
 ### 2) Output Diagnosis — Risk Score
 
 LLM 출력의 위험도를 직교하는 3개 메트릭으로 측정합니다.
