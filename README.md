@@ -1,7 +1,7 @@
 # Hallucination Risk Management for Insurance Underwriting AI
 
-LLM 기반 보험 인수심사에서 발생하는 **할루시네이션 리스크**를 정량화하고, 위험한 케이스만 사람에게 라우팅하는 시스템입니다.
-**RAG + Data Mesh**로 입력 품질을 확보하고, **Conformal Prediction**으로 출력 신뢰도를 통계적으로 보장합니다.
+A system for quantifying **hallucination risk** in LLM-based insurance underwriting and routing only high-risk cases to human reviewers. The framework improves input reliability through **RAG** and **Data Mesh** architecture, while statistically guaranteeing output confidence using **Conformal Prediction**.
+
 
 ## Background
 
