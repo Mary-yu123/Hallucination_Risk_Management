@@ -11,10 +11,10 @@ LLM을 보험 인수심사(underwriting)에 도입할 때 가장 큰 장벽은 *
 
 ### 1) Input Quality — RAG + Data Mesh
 
-LLM 환각의 1차 원인은 **입력 데이터/룰의 모호성**입니다. 이를 두 축으로 차단합니다.
+A primary cause of LLM hallucination is ambiguity in input data and business rules. We mitigate this through two complementary components:
 
-- **Data Mesh**: 데이터를 고객 정보 / 계약 / 청구·민원 / 차량 / CRM 도메인으로 분리·정제하여 신뢰도 높은 구조화 입력 제공
-- **RAG**: 인수심사 기준서에서 현재 케이스에 관련된 룰만 검색하여 컨텍스트로 주입
+- **Data Mesh**: Organizes and refines data into structured domains such as customer information, policy contracts, claims & complaints, vehicle information, and CRM records to provide reliable structured inputs.
+- **RAG(Retrieval-Augmented Generation)**: Retrieves only the underwriting rules relevant to the current case from official guideline documents and injects them into the model context.
 
 > RAG only vs RAG + Data Mesh 비교 결과, **RAG + Data Mesh에서 DG weight가 0일 때 ranking 성능이 최고**였습니다. 이는 별도 보정 없이도 LLM이 입력 데이터를 정확히 따라간다는, 즉 **입력 품질이 충분히 정제되어 있다**는 신호입니다.
 
