@@ -45,7 +45,7 @@ Risk Score만으로는 임계값이 임의적입니다. **Conformal Prediction**
 ## Pipeline
 
 1. **Data Mesh 정제** — 원본 고객 데이터를 4개 도메인으로 구조화
-2. **RAG 검색** — 인수 규정 룰북에서 케이스별 관련 룰 추출
+2. **RAG 검색** — 인수 규정서에서 케이스별 관련 심사 기준 추출
 3. **LLM 추론** — Gemini를 통해 동일 입력으로 3회 점수 예측
 4. **Risk Score 계산** — DG / PG / Stability 가중합
 5. **Conformal Prediction** — Calibration quantile로 사람 검토 분기
