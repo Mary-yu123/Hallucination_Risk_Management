@@ -5,7 +5,9 @@ A system for quantifying **hallucination risk** in LLM-based insurance underwrit
 
 ## Background
 
-LLM을 보험 인수심사(underwriting)에 도입할 때 가장 큰 장벽은 **할루시네이션**입니다. 보험 도메인은 ① 잘못된 결정이 손해율에 직결되는 고위험 영역이고, ② 명시적인 인수 규정(rule)이 존재하지만 LLM이 이를 일관되게 따르지 않으며, ③ 인수심사 기준서 기반으로 정답 점수가 계산 가능해 정량 평가가 가능합니다. 본 프로젝트는 LLM 출력을 무조건 신뢰하는 대신 **위험도를 측정하고 임계값을 통계적으로 정해** 안전한 자동화를 달성하는 것을 목표로 합니다.
+Many industries are actively adopting AI, and the insurance sector is no exception. AI is already proving its value in various areas, including claims settlement, underwriting, product development, and customer service chatbots.
+However, real-world implementation faces a critical risk: AI "hallucination," where the model generates false information and presents it as fact. Therefore, this study proposes a methodology to minimize hallucinations and enhance the reliability of AI underwriting models, an area that requires highly precise judgment.
+
 
 ## Methodology
 
@@ -13,40 +15,39 @@ LLM을 보험 인수심사(underwriting)에 도입할 때 가장 큰 장벽은 *
 
 A primary cause of LLM hallucination is ambiguity in input data and business rules. We mitigate this through two complementary components:
 
-- **Data Mesh**: Organizes and refines data into structured domains such as customer information, policy contracts, claims & complaints, vehicle information, and CRM records to provide reliable structured inputs.
-- **RAG(Retrieval-Augmented Generation)**: Retrieves only the underwriting rules relevant to the current case from official guideline documents and injects them into the model context.
-
+- **Data Mesh**: Reducing hallucinations requires redesigning the data architecture so the AI relies only on trustworthy, structured data. A Data Mesh organizes underwriting data into domain-specific datasets, helping the AI better understand relationships between underwriting factors while improving reliability and consistency.
+  
+- **RAG(Retrieval-Augmented Generation)**: RAG forces the AI to generate responses only from predefined underwriting guidelines and retrieved reference documents, reducing unsupported assumptions and improving factual accuracy. We evaluated this approach using hypothetical underwriting guidelines and 500 records from a U.S. auto insurance claims dataset.
+  
 ### 2) Output Diagnosis — Risk Score
 
-LLM 출력의 위험도를 직교하는 3개 메트릭으로 측정합니다.
+LLM output risk is evaluated using three metrics:
 
-- **DG (Data Grounding)** — LLM이 입력 고객 데이터에 충실한가 
-- **PG (Policy Grounding)** — LLM이 인수 규정을 준수하는가 
-- **Stability** — 동일 입력에 일관된 답변을 내는가
+- **DG (Data Grounding)** — Does the LLM faithfully follow the input customer data?
+- **PG (Policy Grounding)** — Does the LLM comply with underwriting policies and guidelines?
+- **Stability** — Does the LLM produce consistent responses for the same input?
+
 
 $$
 \text{Risk}(x) = 1 - \big( w_1 \cdot \text{DG}(x) + w_2 \cdot \text{PG}(x) + w_3 \cdot \text{Stability}(x) \big)
 $$
 
-가중치 $(w_1, w_2, w_3)$는 grid search로 Spearman / AUC / bin monotonicity 기준 최적화합니다.
+The weights $(w_1, w_2, w_3)$ are optimized through grid search using Spearman correlation, AUC, and bin monotonicity as evaluation criteria.
 
 ### 3) Safety Guarantee — Conformal Prediction
 
-Risk Score만으로는 임계값이 임의적입니다. **Conformal Prediction**으로 통계적 보장 하에 임계값 $\tau$를 결정합니다.
+Risk Scores alone require an arbitrary threshold selection. To address this, we use Conformal Prediction to determine the threshold $\tau$ with statistical guarantees.
 
-1. Calibration set에서 Risk Score 분포를 학습
-2. $(1-\alpha)$ quantile을 임계값 $\tau$로 설정
-3. Test set에서 $\text{Risk} > \tau$ 인 케이스만 사람 검토로 라우팅
-
-이 절차는 **진짜로 위험한 케이스의 최소 $(1-\alpha) \times 100\%$ 가 사람 검토로 라우팅된다**는 marginal coverage를 보장합니다.
+1. Learn the Risk Score distribution from a calibration set
+2. Set the $(1-\alpha)$ quantile as the threshold $\tau$
+3. Route only cases with $\text{Risk} > \tau$ to human review
+   
+This procedure guarantees marginal coverage, ensuring that at least $(1-\alpha)\times100%$ of truly high-risk cases are routed for human review.
 
 ## Pipeline
 
-1. **Data Mesh 정제** — 원본 고객 데이터를 4개 도메인으로 구조화
-2. **RAG 검색** — 인수 규정서에서 케이스별 관련 심사 기준 추출
-3. **LLM 추론** — Gemini를 통해 동일 입력으로 3회 점수 예측
-4. **Risk Score 계산** — DG / PG / Stability 가중합
-5. **Conformal Prediction** — Calibration quantile로 사람 검토 분기
+<img width="2528" height="1684" alt="Gemini_Generated_Image_ie6gf8ie6gf8ie6g" src="https://github.com/user-attachments/assets/7a20ff66-5df5-4ef6-b872-9ca9fe11690c" />
+
 
 ## Data
 
