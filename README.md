@@ -8,6 +8,15 @@ A system for quantifying **hallucination risk** in LLM-based insurance underwrit
 Many industries are actively adopting AI, and the insurance sector is no exception. AI is already proving its value in various areas, including claims settlement, underwriting, product development, and customer service chatbots.
 However, real-world implementation faces a critical risk: AI "hallucination," where the model generates false information and presents it as fact. Therefore, this study proposes a methodology to minimize hallucinations and enhance the reliability of AI underwriting models, an area that requires highly precise judgment.
 
+## Data
+
+[**Auto Insurance Claims Updated to 2024**](https://www.kaggle.com/datasets/thebumpkin/auto-insurance-claims-updated-to-2024) (Kaggle)
+- 9,134 auto insurance claim records
+- 34 columns (including customer demographics, vehicle information, claim history, insurance premiums, etc.)
+- From this dataset, 500 samples were used for the experiment.
+
+Additionally, a separately constructed underwriting rulebook is used to generate ground-truth scores and to evaluate Policy Grounding (PG).
+
 
 ## Methodology
 
@@ -47,14 +56,4 @@ This procedure guarantees marginal coverage, ensuring that at least $(1-\alpha)\
 ## Pipeline
 
 <img width="2528" height="1684" alt="Gemini_Generated_Image_ie6gf8ie6gf8ie6g" src="https://github.com/user-attachments/assets/7a20ff66-5df5-4ef6-b872-9ca9fe11690c" />
-
-
-## Data
-
-[**Auto Insurance Claims Updated to 2024**](https://www.kaggle.com/datasets/thebumpkin/auto-insurance-claims-updated-to-2024) (Kaggle)
-- 9,134 auto insurance claim records
-- 34 columns (including customer demographics, vehicle information, claim history, insurance premiums, etc.)
-- From this dataset, 500 samples were used for the experiment.
-
-Additionally, a separately constructed underwriting rulebook is used to generate ground-truth scores and to evaluate Policy Grounding (PG).
 
