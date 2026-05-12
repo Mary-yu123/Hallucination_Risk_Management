@@ -52,20 +52,9 @@ This procedure guarantees marginal coverage, ensuring that at least $(1-\alpha)\
 ## Data
 
 [**Auto Insurance Claims Updated to 2024**](https://www.kaggle.com/datasets/thebumpkin/auto-insurance-claims-updated-to-2024) (Kaggle)
+- 9,134 auto insurance claim records
+- 34 columns (including customer demographics, vehicle information, claim history, insurance premiums, etc.)
+- From this dataset, 500 samples were used for the experiment.
 
-- 9,134건의 자동차 보험 청구 데이터
-- 34개 컬럼 (고객 인구통계, 차량 정보, 청구 이력, 보험료 등)
-- 인수심사에 필요한 충분한 feature 다양성과 룰 기반 점수화 가능성을 모두 갖추어 선정
+Additionally, a separately constructed underwriting rulebook is used to generate ground-truth scores and to evaluate Policy Grounding (PG).
 
-별도로 자체 제작한 **인수 규정 룰북**을 함께 활용하여 정답 점수와 PG(Policy Grounding) 평가에 사용합니다.
-
-## Model
-
-- **LLM**: Gemini (3회 반복 추론으로 Stability 측정)
-- **RAG**: 인수 규정 룰북 기반 검색
-
-## References
-
-1. Angelopoulos, A. N., & Bates, S. (2023). *A Gentle Introduction to Conformal Prediction and Distribution-Free Uncertainty Quantification.*
-2. Lewis, P., et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.* NeurIPS.
-3. Dehghani, Z. (2022). *Data Mesh: Delivering Data-Driven Value at Scale.* O'Reilly.
