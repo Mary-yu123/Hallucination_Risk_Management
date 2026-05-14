@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UnderAI · Underwriting Chatbot System v5</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',Arial,sans-serif;font-size:13px;background:#F4F6FB;color:#18181B;min-height:100vh}
+#topbar{background:#0E1A4A;color:#fff;padding:10px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.logo{font-size:15px;font-weight:700}.logo span{color:#60A5FA}
+.pill{background:#1A4FBF;color:#93C5FD;font-size:9px;padding:2px 9px;border-radius:20px;font-weight:700}
+.sp{flex:1}
+.dot{font-size:10px;color:#4A6A9A;margin-right:14px}
+.usr{font-size:11px;color:#9BA8CC;display:flex;align-items:center;gap:7px}
+.av{width:26px;height:26px;border-radius:50%;background:#1A4FBF;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+#nav{background:#0E1A4A;display:flex;gap:2px;padding:0 14px;border-top:1px solid rgba(255,255,255,0.07);position:sticky;top:46px;z-index:99;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+#nav button{background:none;border:none;color:#9BA8CC;font-size:12px;padding:9px 14px;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;white-space:nowrap;font-family:inherit}
+#nav button:hover{color:#fff;background:rgba(255,255,255,0.06)}
+#nav button.active{color:#fff;border-bottom:2px solid #60A5FA;font-weight:600}
+#content{padding:22px;max-width:1280px;margin:0 auto}
+.page{display:none}.page.active{display:block}
+.pt{font-size:19px;font-weight:700;margin-bottom:3px}
+.ps{font-size:11.5px;color:#6B7280;margin-bottom:16px}
+.card{background:#fff;border:1px solid rgba(0,0,0,0.09);border-radius:10px;padding:16px 18px;margin-bottom:14px}
+.ct{font-size:13px;font-weight:700;margin-bottom:11px}
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.sc{background:#fff;border:1px solid rgba(0,0,0,0.09);border-radius:10px;padding:14px 16px}
+.slbl{font-size:9.5px;color:#6B7280;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.sv{font-size:24px;font-weight:700;margin-top:4px}
+.sd{font-size:10.5px;color:#6B7280;margin-top:2px}
+.c-blue{color:#1A4FBF}.c-green{color:#059669}.c-red{color:#DC2626}.c-warn{color:#D97706}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:11.5px}
+th{background:#F1F3FA;color:#6B7280;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;padding:9px 11px;text-align:left;font-weight:700;border-bottom:1px solid rgba(0,0,0,0.09);white-space:nowrap}
+td{padding:8px 11px;border-bottom:1px solid #F1F3F8;vertical-align:middle;white-space:nowrap}
+tr:hover td{background:#F8F9FE}
+.tag{display:inline-block;font-size:9.5px;padding:2px 8px;border-radius:20px;font-weight:700}
+.tH{background:#FEE2E2;color:#991B1B}.tM{background:#FEF3C7;color:#92400E}.tL{background:#D1FAE5;color:#065F46}.tX{background:#F3E8FF;color:#6B21A8}
+.upz{border:2px dashed #B0BEE0;border-radius:10px;padding:26px;text-align:center;background:#F8F9FE;cursor:pointer;margin-bottom:14px;transition:.2s}
+.upz:hover{border-color:#1A4FBF;background:#EEF2FF}
+.gtag{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:20px;background:#EEF2FF;color:#1A4FBF;font-weight:600;margin-right:3px;margin-top:2px}
+.gi{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#F8F9FE;border:1px solid #E0E4EF;border-radius:8px;margin-bottom:7px}
+.gi .fn{font-size:12px;font-weight:600;flex:1}.gi .fm{font-size:10px;color:#6B7280}
+.gon{font-size:9.5px;padding:2px 9px;border-radius:20px;font-weight:700;background:#D1FAE5;color:#065F46;white-space:nowrap}
+.mtabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:13px}
+.mtab{padding:6px 14px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid;transition:.15s;user-select:none}
+.mt0{background:#EEF2FF;border-color:#818CF8;color:#3730A3}
+.mt1{background:#ECFDF5;border-color:#34D399;color:#065F46}
+.mt2{background:#FFFBEB;border-color:#F59E0B;color:#92400E}
+.mt3{background:#EFF6FF;border-color:#60A5FA;color:#1E40AF}
+.mt4{background:#FDF4FF;border-color:#E879F9;color:#86198F}
+.mtab.dim{opacity:.4}.mtab:hover{opacity:1}
+.msheet{display:none}.msheet.on{display:block}
+.inn{padding:7px 11px;background:#D1FAE5;border-left:3px solid #10B981;border-radius:0 6px 6px 0;font-size:11px;color:#065F46;margin-top:7px}
+.exn{padding:7px 11px;background:#FEE2E2;border-left:3px solid #EF4444;border-radius:0 6px 6px 0;font-size:11px;color:#991B1B;margin-top:7px}
+.sb-badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 11px;border-radius:20px;margin-bottom:10px}
+/* CHAT */
+.chat-wrap{display:grid;grid-template-columns:1fr 230px;gap:14px}
+.msgs{height:440px;overflow-y:auto;padding:14px;background:#F8F9FE;border:1px solid rgba(0,0,0,0.09);border-radius:10px 10px 0 0;display:flex;flex-direction:column;gap:12px}
+.msg-u-wrap{display:flex;justify-content:flex-end}
+.msg-u{background:#1A4FBF;color:#fff;padding:9px 13px;border-radius:12px 12px 2px 12px;max-width:80%;font-size:12px;line-height:1.55}
+.msg-b-wrap{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.msg-b{background:#fff;border:1px solid rgba(0,0,0,0.09);padding:9px 13px;border-radius:12px 12px 12px 2px;max-width:90%;font-size:12px;line-height:1.6}
+.mmeta{font-size:9px;color:#9CA3AF}
+.mbadges{display:flex;gap:4px;flex-wrap:wrap}
+.badge{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:700}
+.bG{background:#D1FAE5;color:#065F46}.bY{background:#FEF3C7;color:#92400E}
+.bR{background:#FEE2E2;color:#991B1B}.bB{background:#DBEAFE;color:#1E40AF}.bN{background:#F3F4F6;color:#374151}
+.bP{background:#F3E8FF;color:#6B21A8}
+.cpn{font-size:10px;color:#6B7280;font-style:italic;padding:4px 9px;background:#F8F9FE;border-left:2px solid #1A4FBF;border-radius:0 5px 5px 0}
+.chat-bar{display:flex;gap:7px;padding:9px;background:#fff;border:1px solid rgba(0,0,0,0.09);border-top:none;border-radius:0 0 10px 10px}
+textarea.cinp{flex:1;border:1px solid rgba(0,0,0,0.09);border-radius:7px;padding:8px 11px;font-size:12px;outline:none;resize:none;font-family:inherit;background:#F8F9FE;color:#18181B}
+textarea.cinp:focus{border-color:#1A4FBF;background:#fff}
+button.sbtn{background:#1A4FBF;color:#fff;border:none;border-radius:7px;padding:0 16px;font-size:12px;font-weight:700;cursor:pointer}
+button.sbtn:hover{background:#1540A0}
+.chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.chip{font-size:10.5px;padding:4px 10px;border-radius:20px;border:1px solid rgba(0,0,0,0.09);background:#fff;cursor:pointer;color:#18181B;user-select:none;transition:.15s}
+.chip:hover{background:#EEF2FF;border-color:#1A4FBF;color:#1A4FBF}
+.cp-panel{background:#fff;border:1px solid rgba(0,0,0,0.09);border-radius:10px;padding:14px}
+.cp-title{font-size:9.5px;font-weight:700;color:#6B7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px}
+.cp-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:11.5px}
+.cp-lbl{color:#6B7280}.cp-val{font-weight:700}
+.rbar{height:6px;border-radius:20px;background:#F0F2F8;margin:8px 0 4px;overflow:hidden}
+.rfill{height:100%;border-radius:20px;transition:width .4s,background .4s}
+/* RESULT BLOCKS */
+.res-block{background:#FFFBEB;border:1px solid #F59E0B;border-radius:8px;padding:11px 13px;margin-top:7px;font-size:11.5px}
+.rb-title{font-weight:700;font-size:12.5px;margin-bottom:7px}
+.ri-row{display:flex;gap:7px;margin-bottom:5px;font-size:11px;align-items:baseline}
+.ri-src{color:#6B7280;font-size:10px;flex-shrink:0;min-width:160px}
+.fb{border-radius:8px;padding:8px 13px;font-size:12.5px;font-weight:700;margin-top:9px;display:flex;align-items:center;gap:8px}
+.fbM{background:#FEF3C7;color:#92400E;border:1px solid #F59E0B}
+.fbH{background:#FEE2E2;color:#991B1B;border:1px solid #EF4444}
+.fbL{background:#D1FAE5;color:#065F46;border:1px solid #10B981}
+.fbX{background:#F3E8FF;color:#6B21A8;border:1px solid #C084FC}
+/* HALLUCINATION BLOCK — special purple style */
+.halluc-ban{background:#F3E8FF;border:1.5px solid #C084FC;border-radius:10px;padding:12px 14px;margin-top:7px;color:#4C1D95}
+.halluc-ban .hb-title{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.halluc-ban .hb-body{font-size:11.5px;line-height:1.65;font-weight:400}
+.halluc-ban .hb-note{font-size:10.5px;color:#6D28D9;margin-top:7px;padding:5px 9px;background:rgba(196,132,252,.15);border-radius:6px}
+/* MISSING INFO BLOCK */
+.missing-ban{background:#EFF6FF;border:1.5px solid #60A5FA;border-radius:10px;padding:12px 14px;margin-top:7px;color:#1E40AF}
+.missing-ban .mb-title{font-size:13px;font-weight:700;margin-bottom:7px}
+.missing-ban .mb-item{font-size:11.5px;padding:3px 0;display:flex;align-items:center;gap:6px}
+.missing-ban .mb-item::before{content:'○';color:#93C5FD;font-size:13px}
+.missing-ban .mb-item.ok::before{content:'●';color:#059669}
+/* GUIDE BLOCK */
+.blk-ban{background:#FEE2E2;border:1px solid #FCA5A5;border-radius:8px;padding:10px 13px;font-size:12px;font-weight:700;margin-top:7px;color:#991B1B;line-height:1.65}
+/* SCORE BREAKDOWN */
+.score-breakdown{background:#F8F9FE;border:1px solid rgba(0,0,0,0.09);border-radius:8px;padding:10px 13px;margin-top:8px}
+.sb-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;padding:4px 0;border-bottom:1px solid #F0F2F8}
+.sb-row:last-child{border-bottom:none;font-weight:700;padding-top:8px;font-size:12px}
+.sb-rule{font-size:9.5px;color:#6B7280;margin-left:4px}
+/* SETTINGS */
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.set-title{font-size:12.5px;font-weight:700;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid rgba(0,0,0,0.09)}
+.amg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.am{background:#F8F9FE;border:1px solid rgba(0,0,0,0.09);border-radius:8px;padding:9px;text-align:center}
+.am-lbl{font-size:9px;color:#6B7280;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.am-val{font-size:20px;font-weight:700;margin-top:3px}
+.ribox{display:flex;align-items:center;gap:7px;padding:9px 13px;border-radius:8px;font-weight:700;font-size:12.5px;margin:11px 0;transition:.3s}
+.riL{background:#D1FAE5;color:#065F46}.riM{background:#FEF3C7;color:#92400E}.riH{background:#FEE2E2;color:#991B1B}
+.rid{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.riL .rid{background:#10B981}.riM .rid{background:#F59E0B}.riH .rid{background:#EF4444}
+.dbx{border-radius:8px;padding:11px 14px;font-size:12.5px;font-weight:600;margin-top:10px;display:flex;align-items:center;gap:9px}
+.dbA{background:#D1FAE5;color:#065F46;border:1.5px solid #10B981}
+.dbH{background:#FEE2E2;color:#991B1B;border:1.5px solid #EF4444}
+.hm{display:flex;gap:3px;margin-top:6px}
+.hms{height:6px;border-radius:2px;flex:1;background:#E5E7EB;transition:background .3s}
+.cov-lbl{font-size:11px;color:#6B7280;font-style:italic;padding:7px 11px;background:#F8F9FE;border-left:3px solid #1A4FBF;border-radius:0 6px 6px 0;margin-top:9px;line-height:1.5}
+.conf-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+input[type=range]{width:100%;accent-color:#1A4FBF;cursor:pointer}
+.sl-val{font-size:17px;font-weight:700;color:#1A4FBF}
+/* ERM PUSH BUTTON */
+.erm-box{background:linear-gradient(135deg,#0E1A4A 0%,#1A4FBF 100%);border-radius:12px;padding:20px 22px;margin-top:8px;color:#fff}
+.erm-box .erm-title{font-size:14px;font-weight:700;margin-bottom:5px}
+.erm-box .erm-desc{font-size:11.5px;color:#BAC8E8;margin-bottom:14px;line-height:1.6}
+.erm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.erm-stat{background:rgba(255,255,255,.1);border-radius:8px;padding:10px;text-align:center}
+.erm-stat .es-val{font-size:20px;font-weight:700}
+.erm-stat .es-lbl{font-size:9.5px;color:#BAC8E8;margin-top:2px;text-transform:uppercase;letter-spacing:.3px}
+.erm-btn{background:#fff;color:#0E1A4A;border:none;border-radius:8px;padding:11px 20px;font-size:13px;font-weight:700;cursor:pointer;width:100%;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.erm-btn:hover{background:#EEF2FF;transform:translateY(-1px)}
+.erm-btn:active{transform:translateY(0)}
+.erm-sent{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:10px 14px;font-size:12px;color:#D1FAE5;font-weight:600;display:none;align-items:center;gap:8px;margin-top:10px}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:28px;width:500px;max-width:95vw;position:relative;box-shadow:0 8px 40px rgba(0,0,0,.2)}
+.modal-box h3{font-size:16px;font-weight:700;margin-bottom:18px}
+.modal-close{position:absolute;top:14px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#6B7280;line-height:1}
+.modal-close:hover{color:#18181B}
+.or-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#6B7280;font-size:11.5px}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:rgba(0,0,0,0.09)}
+.inp{width:100%;border:1px solid rgba(0,0,0,0.12);border-radius:7px;padding:8px 11px;font-size:12.5px;color:#18181B;outline:none;font-family:inherit;background:#F8F9FE;margin-bottom:10px}
+.inp:focus{border-color:#1A4FBF;background:#fff}
+.inp-lbl{font-size:11px;color:#6B7280;display:block;margin-bottom:4px;font-weight:600}
+.file-drop{border:2px dashed #B0BEE0;border-radius:10px;padding:28px;text-align:center;background:#F8F9FE;cursor:pointer;transition:.2s;display:block;margin-bottom:0}
+.file-drop:hover{border-color:#1A4FBF;background:#EEF2FF}
+.file-drop input[type=file]{display:none}
+.file-name{font-size:11px;color:#059669;margin-top:8px;font-weight:600;min-height:16px}
+.btnp{background:#1A4FBF;color:#fff;border:none;border-radius:7px;padding:9px 18px;font-size:12.5px;font-weight:700;cursor:pointer}
+.btnp:hover{background:#1540A0}
+.btns{background:#fff;border:1px solid rgba(0,0,0,0.09);border-radius:7px;padding:9px 18px;font-size:12.5px;font-weight:700;cursor:pointer;color:#18181B}
+.btns:hover{background:#F1F3FA}
+</style>
+</head>
+<body>
+
+<div id="topbar">
+  <div class="logo">Under<span>AI</span> <span class="pill">v5.0 CP · DataMesh</span></div>
+  <div class="sp"></div>
+  <div class="dot">◉ Data Mesh Connected · Guideline Engine Active · ERM Sync Ready</div>
+  <div class="usr"><div class="av">KJ</div>Kim Jiyeon · Underwriter</div>
+</div>
+
+<div id="nav">
+  <button class="active" onclick="goPage('dash',this)">📊 Dashboard</button>
+  <button onclick="goPage('guide',this)">📋 Underwriting Guide</button>
+  <button onclick="goPage('data',this)">📁 Customer Data</button>
+  <button onclick="goPage('mesh',this)">🔗 Data Mesh</button>
+  <button onclick="goPage('chat',this)">💬 AI Chatbot</button>
+  <button onclick="goPage('settings',this)">⚙️ CP Settings</button>
+</div>
+
+<div id="content">
+
+<!-- ① DASHBOARD -->
+<div class="page active" id="page-dash">
+  <div class="pt">Dashboard</div>
+  <div class="ps">AutoInsuranceClaims2024 · AI col (Risk Score from Excel) · AJ col (Main Reason) · AK col (Final Result)</div>
+  <div class="sg">
+    <div class="sc"><div class="slbl">Customers Loaded</div><div class="sv c-blue">9,134</div><div class="sd">auto_insurance_uw.xlsx</div></div>
+    <div class="sc"><div class="slbl">Standard Accept (0–25)</div><div class="sv c-green">4,201</div><div class="sd">Risk score 0–25 pts</div></div>
+    <div class="sc"><div class="slbl">Additional Review (26–55)</div><div class="sv c-warn">4,512</div><div class="sd">Risk score 26–55 pts</div></div>
+    <div class="sc"><div class="slbl">Conditional / Suspended</div><div class="sv c-red">421</div><div class="sd">Risk score 56+ pts</div></div>
+  </div>
+  <div class="card">
+    <div class="ct">📌 Recent Underwriting History — AI col Risk Score (Exact from Excel)</div>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th>Customer ID</th><th>State</th><th>Location</th><th>Vehicle Class</th><th>Vehicle Size</th>
+          <th style="background:#FFFDE7;color:#92400E">AI col — Risk Score</th>
+          <th style="background:#FFFDE7;color:#92400E;min-width:220px">AJ col — Main Reason</th>
+          <th style="background:#FFFDE7;color:#92400E">AK col — Final Result</th>
+        </tr></thead>
+        <tbody id="dash-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div class="card">
+      <div class="ct">🛡️ CP Coverage Guarantee</div>
+      <div class="sv c-blue" id="dash-cov">90%</div>
+      <div class="cov-lbl" id="dash-cov-txt">Current settings apply approximately 90% coverage guarantee.</div>
+    </div>
+    <div class="card">
+      <div class="ct">🔗 Data Mesh Connection Status</div>
+      <div style="display:flex;flex-direction:column;gap:6px;font-size:11.5px">
+        <div style="display:flex;justify-content:space-between"><span>Customer Data Product</span><span style="color:#059669;font-weight:700">● Online</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Contract Data Product</span><span style="color:#059669;font-weight:700">● Online</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Claims &amp; Complaint Data</span><span style="color:#059669;font-weight:700">● Online</span></div>
+        <div style="display:flex;justify-content:space-between"><span>CRM Data Product</span><span style="color:#D97706;font-weight:700">● Delayed 18ms</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Vehicle Data Product</span><span style="color:#059669;font-weight:700">● Online</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ② UNDERWRITING GUIDE -->
+<div class="page" id="page-guide">
+  <div class="pt">Underwriting Guide Management</div>
+  <div class="ps">Manage official underwriting guideline documents referenced by the AI chatbot.</div>
+  <div class="card">
+    <div class="ct">Upload Guideline Document</div>
+    <div class="upz" onclick="openModal('mod-guide')">
+      <div style="font-size:28px;margin-bottom:8px">📄</div>
+      <div style="font-size:14px;font-weight:600">Upload File or Enter Directly</div>
+      <div style="font-size:11.5px;color:#6B7280;margin-top:4px">PDF, DOCX, XLSX supported · Max 50MB</div>
+      <div style="background:#1A4FBF;color:#fff;display:inline-block;padding:7px 20px;border-radius:7px;font-size:12px;font-weight:700;margin-top:12px">Select File / Enter Manually</div>
+    </div>
+    <div style="margin-bottom:11px">
+      <span class="gtag">Auto Insurance</span><span class="gtag">2025 Revised</span><span class="gtag">CP Standard</span><span class="gtag">Guideline Scoring</span>
+    </div>
+    <div>
+      <div class="gi"><span style="font-size:18px">📕</span><div><div class="fn">Auto Insurance Underwriting Standards v4.2</div><div class="fm">2025.03.01 · Underwriting Team · 128 pages</div><div style="margin-top:3px"><span class="gtag">Risk Score [AI col]</span><span class="gtag">Main Reason [AJ col]</span><span class="gtag">Final Result [AK col]</span></div></div><span class="gon">Active</span></div>
+      <div class="gi"><span style="font-size:18px">📗</span><div><div class="fn">AI Chatbot Underwriting Application Guidelines</div><div class="fm">2025.05.15 · AI Risk Management Team · 44 pages</div><div style="margin-top:3px"><span class="gtag">CP Settings</span><span class="gtag">Hallucination Prevention</span><span class="gtag">Data Mesh</span></div></div><span class="gon">Active</span></div>
+      <div class="gi"><span style="font-size:18px">📙</span><div><div class="fn">auto_insurance_uw.xlsx</div><div class="fm">Uploaded · 9,134 rows · AI col (Risk Score) · AJ col (Main Reason) · AK col (Final Result)</div><div style="margin-top:3px"><span class="gtag">Customer</span><span class="gtag">Contract</span><span class="gtag">Claims</span><span class="gtag">CRM</span><span class="gtag">Vehicle</span></div></div><span class="gon">Active</span></div>
+    </div>
+    <div style="margin-top:12px;padding:10px 14px;background:#EFF6FF;border-radius:8px;font-size:11.5px;line-height:1.75;color:#6B7280">
+      The AI chatbot references only <strong style="color:#18181B">active guideline documents</strong> and AI/AJ/AK columns from the uploaded Excel file.<br>
+      Requests outside the guide → <span style="color:#DC2626;font-weight:700">"This criterion is not included in the underwriting guideline."</span><br>
+      <span style="font-size:10.5px">Gender, Ad Response, Education Level are non-underwriting criteria and are automatically blocked.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ③ CUSTOMER DATA -->
+<div class="page" id="page-data">
+  <div class="pt">Customer Data Input</div>
+  <div class="ps">Raw data from auto_insurance_uw.xlsx · AI col (Risk Score) · AJ col (Main Reason) · AK col (Final Result)</div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button class="btnp" onclick="openModal('mod-upload')">Upload File</button>
+    <button class="btns" onclick="goPage('mesh',document.querySelectorAll('#nav button')[3])">Convert to Data Mesh</button>
+  </div>
+  <div class="card">
+    <div class="ct">Raw Data Table — AI col Risk Score (Exact from Excel)</div>
+    <div class="tw">
+      <table>
+        <thead><tr>
+          <th>Customer ID</th><th>State</th><th>Location</th><th>Vehicle Class</th>
+          <th>Open Complaints</th><th>Last Claim (mo)</th><th>Claim Amount</th>
+          <th style="background:#FFFDE7;color:#92400E">AI — Risk Score</th>
+          <th style="background:#FFFDE7;color:#92400E;min-width:200px">AJ — Main Reason</th>
+          <th style="background:#FFFDE7;color:#92400E">AK — Final Result</th>
+          <th style="color:#DC2626">Gender (excl.)</th>
+        </tr></thead>
+        <tbody id="data-tbody"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:9px;padding:8px 12px;background:#FEE2E2;border-radius:7px;font-size:11px;color:#991B1B">
+      Gender is outside underwriting guideline criteria and is automatically excluded during Data Mesh conversion.
+    </div>
+  </div>
+</div>
+
+<!-- ④ DATA MESH -->
+<div class="page" id="page-mesh">
+  <div class="pt">Data Mesh</div>
+  <div class="ps">Each Excel sheet = one Data Product. Click a tab to explore each domain.</div>
+  <div class="mtabs">
+    <div class="mtab mt0" onclick="switchMesh(0)">👤 Customer Data Product</div>
+    <div class="mtab mt1 dim" onclick="switchMesh(1)">📄 Contract Data Product</div>
+    <div class="mtab mt2 dim" onclick="switchMesh(2)">⚠️ Claims &amp; Complaint Data</div>
+    <div class="mtab mt3 dim" onclick="switchMesh(3)">🚗 Vehicle Data Product</div>
+    <div class="mtab mt4 dim" onclick="switchMesh(4)">💼 CRM Data Product</div>
+  </div>
+  <div class="msheet on" id="ms0">
+    <div class="card">
+      <span class="sb-badge" style="background:#EEF2FF;color:#3730A3">👤 Customer Data Product</span>
+      <div class="tw"><table>
+        <thead><tr><th>Customer ID</th><th>State</th><th>Employment Status</th><th>Income</th><th>Location</th><th>Marital Status</th><th style="background:#FFF1F1;color:#DC2626">Gender (excl.)</th></tr></thead>
+        <tbody id="m0tb"></tbody>
+      </table></div>
+      <div class="exn">Excluded: <strong>Gender</strong> — outside underwriting guideline criteria</div>
+      <div class="inn">Used in scoring: <strong>Location</strong> [3-4-B] — Suburban: +5 pts</div>
+    </div>
+  </div>
+  <div class="msheet" id="ms1">
+    <div class="card">
+      <span class="sb-badge" style="background:#ECFDF5;color:#065F46">📄 Contract Data Product</span>
+      <div class="tw"><table>
+        <thead><tr><th>Customer ID</th><th>Coverage</th><th>Monthly Premium</th><th>Num Policies</th><th>Policy Type</th><th>Policy</th><th>Months Since Inception</th></tr></thead>
+        <tbody id="m1tb"></tbody>
+      </table></div>
+      <div class="inn">Used in scoring: <strong>Months Since Inception</strong> [3-3-A]</div>
+    </div>
+  </div>
+  <div class="msheet" id="ms2">
+    <div class="card">
+      <span class="sb-badge" style="background:#FFFBEB;color:#92400E">⚠️ Claims &amp; Complaint Data Product</span>
+      <div class="tw"><table>
+        <thead><tr><th>Customer ID</th><th style="background:#FFFDE7;color:#92400E">Months Since Last Claim</th><th style="background:#FFFDE7;color:#92400E">Open Complaints</th><th style="background:#FFFDE7;color:#92400E">Total Claim Amount</th></tr></thead>
+        <tbody id="m2tb"></tbody>
+      </table></div>
+      <div class="inn">Core scoring: <strong>Last Claim</strong> [3-1-A] · <strong>Open Complaints</strong> [3-1-C] · <strong>Claim Amount</strong> [3-1-B]</div>
+    </div>
+  </div>
+  <div class="msheet" id="ms3">
+    <div class="card">
+      <span class="sb-badge" style="background:#EFF6FF;color:#1E40AF">🚗 Vehicle Data Product</span>
+      <div class="tw"><table>
+        <thead><tr><th>Customer ID</th><th>Vehicle Class</th><th>Vehicle Size</th></tr></thead>
+        <tbody id="m3tb"></tbody>
+      </table></div>
+      <div class="inn">Used in scoring: <strong>Vehicle Class</strong> [3-2-A] · <strong>Vehicle Size</strong> [3-2-B]</div>
+    </div>
+  </div>
+  <div class="msheet" id="ms4">
+    <div class="card">
+      <span class="sb-badge" style="background:#FDF4FF;color:#86198F">💼 CRM Data Product</span>
+      <div class="tw"><table>
+        <thead><tr><th>Customer ID</th><th>Customer Lifetime Value</th><th>Sales Channel</th><th style="background:#FFF1F1;color:#DC2626">Ad Response (excl.)</th></tr></thead>
+        <tbody id="m4tb"></tbody>
+      </table></div>
+      <div class="exn">Excluded: <strong>Ad Response</strong> — CRM-purpose field, outside underwriting guideline</div>
+      <div class="inn">Reference only: CLV, Sales Channel</div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑤ AI CHATBOT -->
+<div class="page" id="page-chat">
+  <div class="pt">AI Underwriting Chatbot</div>
+  <div class="ps">100% Guideline-based scoring · All 7 criteria required · Hallucination self-detection active · CP Guard enabled</div>
+  <div class="chat-wrap">
+    <div>
+      <div class="chips">
+        <div class="chip" onclick="doPreset(0)">QC35222 Underwriting</div>
+        <div class="chip" onclick="doPreset(1)">CRM Ad Response Inclusion</div>
+        <div class="chip" onclick="doPreset(2)">Risk Score Detail</div>
+        <div class="chip" onclick="doPreset(3)">Unstructured Input (Full)</div>
+        <div class="chip" onclick="doPreset(4)">Unstructured (Missing Info)</div>
+        <div class="chip" onclick="doPreset(5)">Medsize Vehicle Input</div>
+      </div>
+      <div class="msgs" id="msgs">
+        <div class="msg-b-wrap">
+          <div class="msg-b">Hello, I'm <strong>UnderAI</strong>. I assess underwriting risk 100% based on the official guideline. Please provide all 7 scoring criteria: <em>Last Claim (months), Claim Amount, Open Complaints, Vehicle Class, Vehicle Size, Months Since Inception, Location</em>. If any are missing, I will ask you to complete the input.</div>
+          <div class="mmeta">UnderAI · System</div>
+          <div class="mbadges">
+            <span class="badge bG">CP Active</span>
+            <span class="badge bB">Data Mesh Connected</span>
+            <span class="badge bN">7-Criteria Required</span>
+            <span class="badge bP">Hallucination Self-Detection ON</span>
+          </div>
+        </div>
+      </div>
+      <div class="chat-bar">
+        <textarea class="cinp" id="cinp" rows="2" placeholder="Enter Customer ID — or describe all 7 criteria freely (Last Claim, Claim Amount, Open Complaints, Vehicle Class, Vehicle Size, Inception, Location)"></textarea>
+        <button class="sbtn" onclick="doSend()">Send</button>
+      </div>
+    </div>
+    <div class="cp-panel">
+      <div class="cp-title">CP Real-time Status</div>
+      <div class="cp-row"><span class="cp-lbl">Threshold</span><span class="cp-val" id="cp-t">75%</span></div>
+      <div class="cp-row"><span class="cp-lbl">Coverage</span><span class="cp-val c-green" id="cp-c">90%</span></div>
+      <div class="cp-row"><span class="cp-lbl">Auto Rate</span><span class="cp-val" id="cp-a">61%</span></div>
+      <div class="rbar"><div class="rfill" id="cp-rf" style="width:28%;background:#F59E0B"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;color:#6B7280"><span>Halluc. Low</span><span>High</span></div>
+      <div style="margin-top:8px;padding:7px 8px;background:#F8F9FE;border-radius:6px;font-size:10px;color:#6B7280;line-height:1.4" id="cp-desc">Current threshold prioritizes high stability.</div>
+      <div style="margin-top:10px;padding:7px 9px;background:#F3E8FF;border-radius:6px;font-size:10px;color:#6B21A8;font-weight:600">
+        Hallucination Self-Detection: <span style="color:#059669">Active</span><br>
+        <span style="font-weight:400;color:#6D28D9">Medsize trigger: human review enforced</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ⑥ CP SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="pt">CP Automation Settings</div>
+  <div class="ps">Conformal Prediction — Quantile Threshold real-time control · ERM Dashboard Sync</div>
+  <div class="set-grid">
+    <div>
+      <div class="card">
+        <div class="set-title">Quantile Threshold Slider</div>
+        <div style="margin-bottom:12px">
+          <label style="font-size:11.5px;color:#6B7280;display:block;margin-bottom:4px">Quantile Threshold &nbsp;<span class="sl-val" id="tv">75%</span></label>
+          <input type="range" min="50" max="99" value="75" id="ts" oninput="cpUpdate(this.value)">
+          <div style="display:flex;justify-content:space-between;font-size:9.5px;color:#6B7280;margin-top:3px"><span>50% (High Automation)</span><span>99% (High Stability)</span></div>
+        </div>
+        <div class="ribox riM" id="ribox"><div class="rid"></div><span id="rilab">Medium Risk · Balanced</span></div>
+        <div class="amg">
+          <div class="am"><div class="am-lbl">Auto Approve</div><div class="am-val c-green" id="ar">61%</div></div>
+          <div class="am"><div class="am-lbl">Human Review</div><div class="am-val c-warn" id="hr">39%</div></div>
+          <div class="am"><div class="am-lbl">Coverage</div><div class="am-val c-blue" id="cr">90%</div></div>
+          <div class="am"><div class="am-lbl">Halluc. Risk</div><div class="am-val c-red" id="hrc">10%</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="set-title">Automation Decision Status</div>
+        <div class="dbx dbA" id="dbx">
+          <span style="font-size:18px">✅</span>
+          <div><div>Auto Approval Available</div><div style="font-size:10.5px;font-weight:400;margin-top:1px">Confidence threshold met</div></div>
+        </div>
+        <div style="margin-top:9px">
+          <div style="font-size:10.5px;color:#6B7280;margin-bottom:4px">Hallucination Risk Meter</div>
+          <div class="hm" id="hm"></div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="set-title">Coverage Level Visualization</div>
+        <div style="height:170px"><canvas id="cc" style="width:100%;height:100%"></canvas></div>
+        <div class="cov-lbl" id="cov-lbl">Current settings apply approximately 90% coverage guarantee.</div>
+      </div>
+      <div class="card">
+        <div class="set-title">Confidence Badge Status</div>
+        <div class="conf-row"><span style="font-size:12px">Latest Response Confidence</span><span class="badge bG" id="cb1">Threshold Met · 93%</span></div>
+        <div class="conf-row"><span style="font-size:12px">Human Review Tag</span><span class="badge bY" id="cb2">Review Needed 39%</span></div>
+        <div class="conf-row"><span style="font-size:12px">Automation Status</span><span class="badge bB" id="cb3">Auto Active 61%</span></div>
+      </div>
+
+      <!-- ERM PUSH BUTTON -->
+      <div class="card">
+        <div class="set-title">Push to ERM Dashboard</div>
+        <div class="erm-box">
+          <div class="erm-title">Hallucination Risk Report — ERM Dashboard Sync</div>
+          <div class="erm-desc">Send the current hallucination risk metrics and CP threshold settings to the Enterprise Risk Management (ERM) Dashboard for centralized monitoring and audit trail.</div>
+          <div class="erm-stats">
+            <div class="erm-stat"><div class="es-val" id="erm-hal">10%</div><div class="es-lbl">Halluc. Risk</div></div>
+            <div class="erm-stat"><div class="es-val" id="erm-cov">90%</div><div class="es-lbl">Coverage</div></div>
+            <div class="erm-stat"><div class="es-val" id="erm-thresh">75%</div><div class="es-lbl">Threshold</div></div>
+          </div>
+          <button class="erm-btn" onclick="pushToERM()">
+            <span style="font-size:16px">📤</span>
+            Update &amp; Push to ERM Dashboard
+          </button>
+          <div class="erm-sent" id="erm-sent">
+            <span style="font-size:16px">✅</span>
+            <div>
+              <div style="font-weight:700">Successfully pushed to ERM Dashboard</div>
+              <div style="font-size:10.5px;color:#BAC8E8;margin-top:2px">Timestamp: <span id="erm-time"></span> · Audit log updated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</div><!-- #content -->
+
+<!-- MODAL: Guide -->
+<div class="modal-overlay" id="mod-guide">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('mod-guide')">✕</button>
+    <h3>Upload or Enter Guideline</h3>
+    <label class="file-drop" id="guide-drop">
+      <input type="file" id="guide-file" accept=".pdf,.docx,.xlsx,.txt" onchange="handleFile('guide-file','guide-fn','guide-drop')">
+      <div style="font-size:26px;margin-bottom:7px">📂</div>
+      <div style="font-size:13px;font-weight:600">Drag &amp; drop or click to select</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:3px">PDF, DOCX, XLSX, TXT</div>
+      <div style="background:#1A4FBF;color:#fff;display:inline-block;padding:6px 18px;border-radius:6px;font-size:11.5px;font-weight:700;margin-top:10px">Select File</div>
+      <div class="file-name" id="guide-fn"></div>
+    </label>
+    <div class="or-divider">or enter manually</div>
+    <label class="inp-lbl">Guideline Name</label>
+    <input class="inp" id="guide-name" placeholder="e.g., Auto Insurance Underwriting Standards v4.3">
+    <label class="inp-lbl">Content / Key Criteria</label>
+    <textarea class="inp" id="guide-content" rows="4" style="resize:vertical" placeholder="Enter guideline content or scoring criteria..."></textarea>
+    <button class="btnp" style="width:100%" onclick="submitGuide()">Register Guideline</button>
+  </div>
+</div>
+
+<!-- MODAL: Upload -->
+<div class="modal-overlay" id="mod-upload">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('mod-upload')">✕</button>
+    <h3>Upload Customer Data File</h3>
+    <label class="file-drop" id="upload-drop">
+      <input type="file" id="upload-file" accept=".xlsx,.csv,.pdf,.docx" onchange="handleFile('upload-file','upload-fn','upload-drop')">
+      <div style="font-size:26px;margin-bottom:7px">📊</div>
+      <div style="font-size:13px;font-weight:600">Drag &amp; drop or click to upload</div>
+      <div style="font-size:11px;color:#6B7280;margin-top:3px">XLSX, CSV, PDF, DOCX · Max 50MB</div>
+      <div style="background:#1A4FBF;color:#fff;display:inline-block;padding:6px 18px;border-radius:6px;font-size:11.5px;font-weight:700;margin-top:10px">Select File</div>
+      <div class="file-name" id="upload-fn"></div>
+    </label>
+    <div style="margin-top:14px;padding:10px 13px;background:#EFF6FF;border-radius:8px;font-size:11.5px;color:#6B7280;line-height:1.65">
+      Uploaded data will be auto-classified into 5 Data Mesh products.<br>
+      <strong style="color:#DC2626">Gender</strong> and <strong style="color:#DC2626">Ad Response</strong> will be automatically excluded.
+    </div>
+    <button class="btnp" style="width:100%;margin-top:14px" onclick="submitUpload()">Upload &amp; Convert to Data Mesh</button>
+  </div>
+</div>
+
+<script>
+// ── CUSTOMER DATA (AI col scores exact from Excel) ──
+var D=[
+  {id:'QC35222',st:'California',loc:'Urban',veh:'Four-Door Car',vsz:'Medsize',clv:3622.69,resp:'No',cov:'Basic',emp:'Employed',g:'F',inc:65163,mar:'Married',pr:93,lc:4,ins:107,cp:3,np:1,pt:'Corporate Auto',pol:'Corporate L2',sch:'Web',ca:380.9,    score:65, reason:'Open Complaints: 3 [3-1-C] +40pts | Last Claim: 4mo [3-1-A] +25pts',result:'Conditional Review'},
+  {id:'AE98193',st:'Washington',loc:'Suburban',veh:'SUV',vsz:'Medsize',clv:10610.21,resp:'No',cov:'Basic',emp:'Unemployed',g:'M',inc:0,mar:'Single',pr:153,lc:26,ins:14,cp:0,np:7,pt:'Personal Auto',pol:'Personal L1',sch:'Branch',ca:1098.36,score:50, reason:'Claim Amount: $1098 [3-1-B] +35pts | SUV [3-2-A] +10pts | Suburban [3-4-B] +5pts',result:'Additional Review'},
+  {id:'TM23514',st:'Oregon',loc:'Urban',veh:'SUV',vsz:'Medsize',clv:13868.02,resp:'No',cov:'Extended',emp:'Employed',g:'M',inc:81196,mar:'Single',pr:178,lc:11,ins:38,cp:0,np:3,pt:'Personal Auto',pol:'Personal L3',sch:'Web',ca:783.64,score:45, reason:'Claim Amount: $784 [3-1-B] +20pts | SUV [3-2-A] +10pts | Last Claim: 11mo [3-1-A] +15pts',result:'Additional Review'},
+  {id:'WB38524',st:'California',loc:'Suburban',veh:'Two-Door Car',vsz:'Small',clv:4008.95,resp:'No',cov:'Basic',emp:'Employed',g:'M',inc:62277,mar:'Married',pr:100,lc:36,ins:38,cp:0,np:1,pt:'Personal Auto',pol:'Personal L3',sch:'Branch',ca:479.52,score:5,  reason:'Suburban [3-4-B] +5pts',result:'Standard Accept'},
+  {id:'QZ42725',st:'Washington',loc:'Suburban',veh:'Four-Door Car',vsz:'Medsize',clv:3119.69,resp:'No',cov:'Basic',emp:'Unemployed',g:'F',inc:0,mar:'Single',pr:86,lc:16,ins:32,cp:0,np:1,pt:'Personal Auto',pol:'Personal L3',sch:'Agent',ca:622.08,score:20, reason:'Claim Amount: $622 [3-1-B] +10pts | Last Claim: 16mo [3-1-A] +5pts | Suburban [3-4-B] +5pts',result:'Standard Accept'},
+  {id:'SG81493',st:'Arizona',loc:'Rural',veh:'Four-Door Car',vsz:'Medsize',clv:5999.04,resp:'No',cov:'Premium',emp:'Employed',g:'M',inc:62618,mar:'Married',pr:153,lc:45,ins:126,cp:0,np:1,pt:'Corporate Auto',pol:'Corporate L1',sch:'Web',ca:339.9,score:0,  reason:'No risk factors identified',result:'Standard Accept'},
+  {id:'QP80741',st:'Washington',loc:'Suburban',veh:'Four-Door Car',vsz:'Medsize',clv:8165.58,resp:'No',cov:'Basic',emp:'Unemployed',g:'F',inc:0,mar:'Married',pr:82,lc:23,ins:96,cp:3,np:2,pt:'Corporate Auto',pol:'Corporate L1',sch:'Agent',ca:395.28,score:50, reason:'Open Complaints: 3 [3-1-C] +40pts | Last Claim: 23mo [3-1-A] +5pts | Suburban [3-4-B] +5pts',result:'Additional Review'},
+  {id:'FN69743',st:'California',loc:'Suburban',veh:'Two-Door Car',vsz:'Medsize',clv:6259.34,resp:'Yes',cov:'Basic',emp:'Retired',g:'M',inc:36183,mar:'Married',pr:89,lc:9,ins:58,cp:1,np:5,pt:'Corporate Auto',pol:'Corporate L1',sch:'Agent',ca:427.68,score:30, reason:'Open Complaints: 1 [3-1-C] +10pts | Last Claim: 9mo [3-1-A] +15pts | Suburban [3-4-B] +5pts',result:'Additional Review'},
+  {id:'BW52697',st:'California',loc:'Urban',veh:'Two-Door Car',vsz:'Medsize',clv:7431.83,resp:'No',cov:'Basic',emp:'Employed',g:'F',inc:116278,mar:'Married',pr:92,lc:41,ins:14,cp:0,np:3,pt:'Personal Auto',pol:'Personal L3',sch:'Call Center',ca:406.94,score:0,  reason:'No risk factors identified',result:'Standard Accept'},
+  {id:'WP41146',st:'California',loc:'Suburban',veh:'Four-Door Car',vsz:'Medsize',clv:7210.94,resp:'No',cov:'Basic',emp:'Unemployed',g:'F',inc:0,mar:'Married',pr:97,lc:5,ins:15,cp:1,np:7,pt:'Personal Auto',pol:'Personal L2',sch:'Branch',ca:466.56,score:40, reason:'Last Claim: 5mo [3-1-A] +25pts | Open Complaints: 1 [3-1-C] +10pts | Suburban [3-4-B] +5pts',result:'Additional Review'},
+  {id:'HP55391',st:'Oregon',loc:'Suburban',veh:'Four-Door Car',vsz:'Medsize',clv:7325.28,resp:'No',cov:'Basic',emp:'Unemployed',g:'M',inc:0,mar:'Married',pr:96,lc:45,ins:112,cp:0,np:3,pt:'Corporate Auto',pol:'Corporate L3',sch:'Agent',ca:550.8,score:15, reason:'Claim Amount: $551 [3-1-B] +10pts | Suburban [3-4-B] +5pts',result:'Standard Accept'},
+  {id:'US45383',st:'California',loc:'Suburban',veh:'Two-Door Car',vsz:'Medsize',clv:16579.03,resp:'Yes',cov:'Premium',emp:'Employed',g:'M',inc:119259,mar:'Married',pr:138,lc:22,ins:1,cp:0,np:2,pt:'Personal Auto',pol:'Personal L3',sch:'Branch',ca:660.96,score:30, reason:'Claim Amount: $661 [3-1-B] +10pts | Inception: 1mo [3-3-A] +10pts | Suburban [3-4-B] +5pts',result:'Additional Review'},
+  {id:'XC16387',st:'Arizona',loc:'Rural',veh:'Four-Door Car',vsz:'Medsize',clv:6804.56,resp:'No',cov:'Basic',emp:'Employed',g:'F',inc:62197,mar:'Single',pr:86,lc:0,ins:82,cp:0,np:4,pt:'Personal Auto',pol:'Personal L3',sch:'Branch',ca:35.01,score:25, reason:'Last Claim: 0mo [3-1-A] +25pts',result:'Standard Accept'},
+  {id:'VU53417',st:'Arizona',loc:'Suburban',veh:'Two-Door Car',vsz:'Medsize',clv:5180.43,resp:'No',cov:'Extended',emp:'Medical Leave',g:'M',inc:31119,mar:'Divorced',pr:134,lc:42,ins:116,cp:0,np:1,pt:'Personal Auto',pol:'Personal L1',sch:'Agent',ca:641.52,score:15, reason:'Claim Amount: $642 [3-1-B] +10pts | Suburban [3-4-B] +5pts',result:'Standard Accept'},
+  {id:'KR62797',st:'Arizona',loc:'Suburban',veh:'SUV',vsz:'Medsize',clv:6198.7,resp:'No',cov:'Basic',emp:'Employed',g:'F',inc:112451,mar:'Married',pr:153,lc:8,ins:38,cp:0,np:1,pt:'Personal Auto',pol:'Personal L2',sch:'Call Center',ca:732.24,score:40, reason:'Last Claim: 8mo [3-1-A] +15pts | Claim Amount: $732 [3-1-B] +10pts | SUV [3-2-A] +10pts | Suburban [3-4-B] +5pts',result:'Additional Review'}
+];
+
+// ── HELPERS ──
+function rTag(r){
+  if(r==='Conditional Review') return '<span class="tag tM">'+r+'</span>';
+  if(r==='Additional Review')  return '<span class="tag tH">'+r+'</span>';
+  if(r==='Suspended')          return '<span class="tag tX">'+r+'</span>';
+  return '<span class="tag tL">'+r+'</span>';
+}
+function sTag(s){
+  var v=parseInt(s)||0;
+  var cls=v>=56?'tM':v>=26?'tH':'tL';
+  return '<span class="tag '+cls+'">'+s+' pts</span>';
+}
+
+// ── FILL TABLES ──
+function fillAll(){
+  var dtb=document.getElementById('dash-tbody');
+  var datb=document.getElementById('data-tbody');
+  var m0=document.getElementById('m0tb');
+  var m1=document.getElementById('m1tb');
+  var m2=document.getElementById('m2tb');
+  var m3=document.getElementById('m3tb');
+  var m4=document.getElementById('m4tb');
+
+  D.forEach(function(c){
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td><strong>'+c.id+'</strong></td><td>'+c.st+'</td><td>'+c.loc+'</td><td>'+c.veh+'</td><td>'+c.vsz+'</td>'
+      +'<td style="background:#FFFDE7">'+sTag(c.score)+'</td>'
+      +'<td style="background:#FFFDE7;font-size:10.5px;white-space:normal">'+c.reason+'</td>'
+      +'<td style="background:#FFFDE7">'+rTag(c.result)+'</td>';
+    dtb.appendChild(tr);
+
+    var tr2=document.createElement('tr');
+    tr2.innerHTML='<td><strong>'+c.id+'</strong></td><td>'+c.st+'</td><td>'+c.loc+'</td><td>'+c.veh+'</td>'
+      +'<td style="color:'+(c.cp>0?'#DC2626':'#059669')+';font-weight:700">'+c.cp+'</td>'
+      +'<td>'+c.lc+' mo</td><td>$'+c.ca+'</td>'
+      +'<td style="background:#FFFDE7">'+sTag(c.score)+'</td>'
+      +'<td style="background:#FFFDE7;font-size:10.5px;white-space:normal">'+c.reason+'</td>'
+      +'<td style="background:#FFFDE7">'+rTag(c.result)+'</td>'
+      +'<td style="color:#6B7280;font-size:10.5px">'+(c.g==='F'?'Female':'Male')+' </td>';
+    datb.appendChild(tr2);
+
+    var r0=document.createElement('tr');
+    r0.innerHTML='<td><strong>'+c.id+'</strong></td><td>'+c.st+'</td><td>'+c.emp+'</td>'
+      +'<td>$'+c.inc.toLocaleString()+'</td><td>'+c.loc+'</td><td>'+c.mar+'</td>'
+      +'<td style="color:#DC2626;font-size:10.5px">'+(c.g==='F'?'Female':'Male')+'</td>';
+    m0.appendChild(r0);
+
+    var r1=document.createElement('tr');
+    r1.innerHTML='<td><strong>'+c.id+'</strong></td><td>'+c.cov+'</td><td>$'+c.pr+'</td>'
+      +'<td>'+c.np+'</td><td>'+c.pt+'</td><td>'+c.pol+'</td><td>'+c.ins+' mo</td>';
+    m1.appendChild(r1);
+
+    var r2=document.createElement('tr');
+    r2.innerHTML='<td><strong>'+c.id+'</strong></td>'
+      +'<td style="background:#FFFDE7;font-weight:700">'+c.lc+' mo</td>'
+      +'<td style="background:#FFFDE7;font-weight:700">'+c.cp+'</td>'
+      +'<td style="background:#FFFDE7;font-weight:700">$'+c.ca+'</td>';
+    m2.appendChild(r2);
+
+    var r3=document.createElement('tr');
+    r3.innerHTML='<td><strong>'+c.id+'</strong></td><td>'+c.veh+'</td><td>'+c.vsz+'</td>';
+    m3.appendChild(r3);
+
+    var r4=document.createElement('tr');
+    r4.innerHTML='<td><strong>'+c.id+'</strong></td><td>$'+c.clv.toLocaleString()+'</td>'
+      +'<td>'+c.sch+'</td><td style="color:#DC2626;font-size:10.5px">'+c.resp+'</td>';
+    m4.appendChild(r4);
+  });
+}
+
+// ── GUIDELINE SCORING ENGINE ──
+// Returns null for a criterion if not found in text
+function parseText(t){
+  var out={lc:null,ca:null,cp:null,vc:null,vs:null,ins:null,loc:null};
+  var m;
+
+  // Location [3-4-B]
+  if(/\bsuburban\b/.test(t)) out.loc='Suburban';
+  else if(/\burban\b/.test(t)) out.loc='Urban';
+  else if(/\brural\b/.test(t)) out.loc='Rural';
+
+  // Last claim months [3-1-A]
+  m=t.match(/(?:months?\s*since\s*last\s*claim|last\s*claim)[^0-9]*([0-9]+)\s*mo/);
+  if(!m) m=t.match(/([0-9]+)\s*mo[a-z]*\s*(?:ago\s*)?(?:last|since\s*last|claim)/);
+  if(m) out.lc=parseInt(m[1]);
+  if(/last\s*claim[^<]*(?:less\s*than\s*6|<\s*6|under\s*6)/.test(t)) out.lc=3;
+  else if(/last\s*claim[^a-z]*(?:6\s*(?:to|~|-)\s*12|6[-–]12)/.test(t)) out.lc=9;
+  else if(/last\s*claim[^a-z]*(?:12\s*(?:to|~|-)\s*24|12[-–]24)/.test(t)) out.lc=18;
+  else if(/last\s*claim[^a-z]*(?:24|more\s*than\s*24|over\s*24|above\s*24|at\s*least\s*24|>=\s*24|>=24)/.test(t)) out.lc=30;
+  if(/no\s*(?:recent\s*)?claim|never\s*claimed|no\s*claim\s*history/.test(t)) out.lc=99;
+
+  // Claim amount [3-1-B]
+  m=t.match(/(?:total\s*)?claim\s*amount[^0-9]*\$?\s*([0-9,]+(?:\.[0-9]+)?)/);
+  if(!m) m=t.match(/\$\s*([0-9,]+(?:\.[0-9]+)?)\s*(?:claim|total|or\s*(?:below|less|under))/);
+  if(m) out.ca=parseFloat(m[1].replace(/,/g,''));
+  if(/claim.*(?:under|below|less\s*than|<=|≤)\s*\$?\s*518|518\s*or\s*(less|below)|(?:under|below)\s*518/.test(t)) out.ca=400;
+  else if(/claim.*518.*(?:to|~|-).*739/.test(t)) out.ca=600;
+  else if(/claim.*739.*(?:to|~|-).*1[,.]?044/.test(t)) out.ca=900;
+  else if(/claim.*(?:over|above|more\s*than|>\s*|>=\s*|≥\s*)1[,.]?044/.test(t)) out.ca=1100;
+
+  // Open complaints [3-1-C]
+  m=t.match(/(?:open\s*)?complaints?\s*(?:is\s*|:?\s*)?([0-9]+)/);
+  if(!m) m=t.match(/([0-9]+)\s*(?:open\s*)?complaints?/);
+  if(m) out.cp=parseInt(m[1]);
+  if(/no\s*(?:open\s*)?complaints?|zero\s*complaints?/.test(t)) out.cp=0;
+
+  // Vehicle class [3-2-A]
+  if(/sports\s*car/.test(t)) out.vc='Sports Car';
+  else if(/luxury\s*suv/.test(t)) out.vc='Luxury SUV';
+  else if(/luxury\s*(car)?/.test(t)) out.vc='Luxury Car';
+  else if(/\bsuv\b/.test(t)) out.vc='SUV';
+  else if(/four.door|4.door/.test(t)) out.vc='Four-Door Car';
+  else if(/two.door|2.door/.test(t)) out.vc='Two-Door Car';
+
+  // Vehicle size [3-2-B]
+  if(/\blarge\b/.test(t)) out.vs='Large';
+  else if(/\bmedsize\b|\bmedium\s*size\b/.test(t)) out.vs='Medsize';
+  else if(/\bsmall\b/.test(t)) out.vs='Small';
+
+  // Months since inception [3-3-A]
+  m=t.match(/(?:months?\s*since\s*(?:policy\s*)?inception|inception)[^0-9]*([0-9]+)/);
+  if(!m) m=t.match(/policy\s*(?:age|period|duration)[^0-9]*([0-9]+)/);
+  if(!m) m=t.match(/contract[^0-9]*([0-9]+)\s*mo/);
+  if(m) out.ins=parseInt(m[1]);
+  if(/inception[^0-9a-z]*(?:less\s*than\s*6|<\s*6|under\s*6|new\s*policy)/.test(t)) out.ins=3;
+  if(/inception[^0-9a-z]*(?:6\s*(?:to|~|-)\s*12)/.test(t)) out.ins=9;
+  if(/inception[^0-9a-z]*(?:12\s*(?:or\s*more|above|\+)|more\s*than\s*12|over\s*12|>=\s*12|12\s*months?\s*or\s*more)/.test(t)) out.ins=15;
+
+  return out;
+}
+
+function scoreFromParsed(p){
+  var score=0,bd=[],rules=[];
+
+  if(p.lc!==null){
+    var pts=p.lc<6?25:p.lc<12?15:p.lc<24?5:0;
+    var lbl=p.lc<6?'<6 mo (+25)':p.lc<12?'6–12 mo (+15)':p.lc<24?'12–24 mo (+5)':'≥24 mo (0)';
+    score+=pts; bd.push({code:'[3-1-A]',src:'Claims & Complaint Data',desc:'Last Claim: '+p.lc+' mo — '+lbl,pts:pts});
+  }
+  if(p.ca!==null){
+    var pts=p.ca>1044?35:p.ca>739?20:p.ca>518?10:0;
+    var lbl=p.ca>1044?'>$1,044 (+35)':p.ca>739?'$739–$1,044 (+20)':p.ca>518?'$518–$739 (+10)':'≤$518 (0)';
+    score+=pts; bd.push({code:'[3-1-B]',src:'Claims & Complaint Data',desc:'Claim Amount: $'+p.ca+' — '+lbl,pts:pts});
+  }
+  if(p.cp!==null){
+    var pts=p.cp>=3?40:p.cp===2?25:p.cp===1?10:0;
+    var lbl=p.cp>=3?'≥3 (+40)':p.cp===2?'2 (+25)':p.cp===1?'1 (+10)':'0 (0)';
+    score+=pts; bd.push({code:'[3-1-C]',src:'Claims & Complaint Data',desc:'Open Complaints: '+p.cp+' — '+lbl,pts:pts});
+  }
+  if(p.vc!==null){
+    var isH=['Sports Car','Luxury Car','Luxury SUV'].indexOf(p.vc)>=0;
+    var pts=isH?25:p.vc==='SUV'?10:0;
+    score+=pts; bd.push({code:'[3-2-A]',src:'Vehicle Data',desc:'Vehicle Class: '+p.vc+(pts>0?' (+'+pts+')':' (0)'),pts:pts});
+  }
+  if(p.vs!==null){
+    var pts=p.vs==='Large'?10:0;
+    score+=pts; bd.push({code:'[3-2-B]',src:'Vehicle Data',desc:'Vehicle Size: '+p.vs+(pts>0?' (+10)':' (0)'),pts:pts});
+  }
+  if(p.ins!==null){
+    var pts=p.ins<6?10:p.ins<12?5:0;
+    var lbl=p.ins<6?'<6 mo (+10)':p.ins<12?'6–12 mo (+5)':'≥12 mo (0)';
+    score+=pts; bd.push({code:'[3-3-A]',src:'Contract Data',desc:'Months Since Inception: '+p.ins+' mo — '+lbl,pts:pts});
+  }
+  if(p.loc!==null){
+    var pts=p.loc==='Suburban'?5:0;
+    score+=pts; bd.push({code:'[3-4-B]',src:'Customer Data',desc:'Location: '+p.loc+(pts>0?' (+5)':' (0)'),pts:pts});
+  }
+  // Composite rules
+  var vcH=p.vc&&['Sports Car','Luxury Car','Luxury SUV'].indexOf(p.vc)>=0;
+  if(vcH&&p.lc!==null&&p.lc<12){score+=20;rules.push({rule:'[Rule 1]',desc:'High-risk vehicle + Last Claim <12mo',pts:20});}
+  if(p.ca!==null&&p.ca>=739&&p.cp!==null&&p.cp>=2){score+=15;rules.push({rule:'[Rule 2]',desc:'Claim Amount ≥$739 + Open Complaints ≥2',pts:15});}
+  if(p.ins!==null&&p.ins<6&&p.ca!==null&&p.ca>=1044){score+=10;rules.push({rule:'[Rule 3]',desc:'Policy Inception <6mo + Claim Amount ≥$1,044',pts:10});}
+
+  var result,fbCls;
+  if(score>=86){result='Suspended / Joint Underwriting Review';fbCls='fbX';}
+  else if(score>=56){result='Conditional Review';fbCls='fbM';}
+  else if(score>=26){result='Additional Review';fbCls='fbH';}
+  else{result='Standard Accept';fbCls='fbL';}
+
+  return {score:score,bd:bd,rules:rules,result:result,fbCls:fbCls};
+}
+
+// Which of the 7 criteria are missing
+var CRITERIA_LABELS={
+  lc:'Last Claim (months since last claim) [3-1-A]',
+  ca:'Total Claim Amount ($) [3-1-B]',
+  cp:'Number of Open Complaints [3-1-C]',
+  vc:'Vehicle Class (e.g. SUV, Two-Door Car) [3-2-A]',
+  vs:'Vehicle Size (Large / Medsize / Small) [3-2-B]',
+  ins:'Months Since Policy Inception [3-3-A]',
+  loc:'Location (Urban / Suburban / Rural) [3-4-B]'
+};
+
+function getMissing(p){
+  var missing=[];
+  var keys=['lc','ca','cp','vc','vs','ins','loc'];
+  keys.forEach(function(k){ if(p[k]===null) missing.push(k); });
+  return missing;
+}
+
+// ── NAV ──
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('#nav button').forEach(function(b){b.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  if(btn) btn.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── MESH TABS ──
+function switchMesh(i){
+  document.querySelectorAll('.mtab').forEach(function(t,j){t.classList.toggle('dim',j!==i);});
+  document.querySelectorAll('.msheet').forEach(function(s,j){s.classList.toggle('on',j===i);});
+}
+
+// ── MODALS ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('click',function(e){
+  document.querySelectorAll('.modal-overlay').forEach(function(m){if(e.target===m)m.classList.remove('open');});
+});
+function handleFile(inputId,nameId,dropId){
+  var f=document.getElementById(inputId).files[0];
+  if(f){
+    document.getElementById(nameId).textContent='Selected: '+f.name;
+    document.getElementById(dropId).style.borderColor='#059669';
+    document.getElementById(dropId).style.background='#ECFDF5';
+  }
+}
+function submitGuide(){
+  var n=document.getElementById('guide-name').value.trim();
+  if(!n){alert('Please enter a guideline name.');return;}
+  closeModal('mod-guide');
+  alert('Guideline registered: "'+n+'"');
+}
+function submitUpload(){
+  closeModal('mod-upload');
+  alert('Upload complete. Data Mesh conversion in progress...');
+}
+
+// ── ERM PUSH ──
+function pushToERM(){
+  var cov=Math.round(50+cpT*0.5);
+  var hal=100-cov;
+  document.getElementById('erm-hal').textContent=hal+'%';
+  document.getElementById('erm-cov').textContent=cov+'%';
+  document.getElementById('erm-thresh').textContent=cpT+'%';
+  var sent=document.getElementById('erm-sent');
+  sent.style.display='flex';
+  var now=new Date();
+  document.getElementById('erm-time').textContent=now.toLocaleString('en-US');
+  document.querySelector('.erm-btn').textContent='✅  Pushed — Push Again';
+}
+
+// ── CHAT ──
+var cpT=75;
+var WAIT=false;
+var PRE=[
+  {u:'QC35222 — Urban, Four-Door Car, 3 open complaints, last claim 4 months ago, California.',t:'qc'},
+  {u:'This customer responded Yes to the CRM ad response field. Please include this in the underwriting assessment.',t:'crm'},
+  {u:'Risk score detail explanation',t:'detail'},
+  {u:'This customer lives in Suburban. Policy inception is 12 months or more. Vehicle size is Small, Two-Door Car. Open complaints: 0. Total claim amount is $518 or below. Last claim history is less than 6 months.',t:'unstruct'},
+  {u:'This customer lives in Suburban. Open complaints: 0. Vehicle: Two-Door Car. Claim amount: $400.',t:'missing'},
+  {u:'This customer lives in Urban. Vehicle size is Medsize. Two-Door Car. Last claim: 8 months ago. Open complaints: 1. Claim amount $600. Policy inception: 14 months.',t:'medsize'}
+];
+
+function doPreset(i){addU(PRE[i].u);setTimeout(function(){botHandler(PRE[i].t,PRE[i].u);},700);}
+
+function doSend(){
+  var el=document.getElementById('cinp');
+  var v=el.value.trim();if(!v)return;el.value='';addU(v);
+  var lo=v.toLowerCase(),up=v.toUpperCase();
+  setTimeout(function(){
+    if(WAIT){botHandler('wait',v);return;}
+    if(/ad\s*response|advertisement|crm\s*response/.test(lo)){botHandler('crm',v);return;}
+    if(/risk\s*score.*(?:detail|explain)|explain.*risk\s*score/.test(lo)){botHandler('detail',v);return;}
+    // Check for known customer ID
+    var found=null;
+    for(var i=0;i<D.length;i++){if(up.indexOf(D[i].id)>=0){found=D[i];break;}}
+    if(found){botHandler('found',v,found);return;}
+    // Unstructured
+    botHandler('unstruct',v);
+  },650);
+}
+
+document.getElementById('cinp').addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();doSend();}
+});
+
+function botHandler(type,txt,extra){
+  var cov=Math.round(50+cpT*0.5);
+
+  if(type==='qc'){
+    var c=D[0];
+    var rs=c.reason.split('|');var rh='';
+    rs.forEach(function(r){
+      r=r.trim();
+      rh+='<div class="ri-row"><span class="ri-src">Claims &amp; Complaint Data</span><span>'+r+'</span></div>';
+    });
+    addB('<div style="font-size:10.5px;color:#DC2626;margin-bottom:7px">Gender excluded — outside underwriting guideline criteria</div>'
+      +'<div class="res-block"><div class="rb-title">Underwriting Analysis · '+c.id+' (AI col Risk Score: '+c.score+' pts)</div>'
+      +'<div style="font-size:10px;color:#6B7280;margin-bottom:6px">Exact score from Excel AI col</div>'
+      +rh
+      +'<div style="margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,0,0,0.08)">'
+      +'<span style="font-size:11px;color:#6B7280">AI col — Risk Score</span>'
+      +'<strong style="font-size:18px;color:#D97706;margin-left:8px">'+c.score+' pts</strong></div>'
+      +'<div class="fb fbM">'+c.result+'</div></div>',
+      ['conf','cov','hl','hr']);
+
+  } else if(type==='crm'){
+    addB('<div class="blk-ban">This criterion is not included in the underwriting guideline.<br>'
+      +'<span style="font-weight:400;font-size:11px">CRM Ad Response (Yes/No) is a marketing-purpose field and is not part of the official underwriting guideline. This request has been blocked by the CP hallucination guard.</span></div>',
+      ['hb','gb','ab']);
+
+  } else if(type==='detail'){
+    WAIT=true;
+    addB('Which customer\'s risk score would you like explained?<br>'
+      +'<span style="font-size:11px;color:#6B7280">Please enter the Customer Primary Key (ID). e.g., QC35222</span>',['conf']);
+
+  } else if(type==='wait'){
+    WAIT=false;
+    var up=txt.toUpperCase();var f=null;
+    for(var i=0;i<D.length;i++){if(up.indexOf(D[i].id)>=0){f=D[i];break;}}
+    if(f){
+      var rs=f.reason.split('|');var rh='';
+      rs.forEach(function(r){r=r.trim();rh+='<div class="ri-row"><span class="ri-src">AJ col</span><span>'+r+'</span></div>';});
+      var fc=f.result==='Conditional Review'?'fbM':f.result==='Additional Review'?'fbH':f.result==='Suspended'?'fbX':'fbL';
+      addB('<div class="res-block"><div class="rb-title">Underwriting Analysis · '+f.id+'</div>'
+        +'<div style="font-size:10px;color:#6B7280;margin-bottom:6px">AI col (exact score) · AJ col (main reason) · AK col (final result)</div>'
+        +rh
+        +'<div style="margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,0,0,0.08)">'
+        +'<span style="font-size:11px;color:#6B7280">AI col — Risk Score</span>'
+        +'<strong style="font-size:18px;color:'+(f.score>=56?'#D97706':f.score>=26?'#D97706':'#059669')+';margin-left:8px">'+f.score+' pts</strong></div>'
+        +'<div class="fb '+fc+'">'+f.result+'</div></div>',['conf','cov']);
+    } else {
+      WAIT=true;
+      addB('Customer ID not found. Please enter a valid Customer ID.<br>'
+        +'<span style="font-size:11px;color:#6B7280">e.g., QC35222, AE98193, TM23514</span>',['conf']);
+    }
+
+  } else if(type==='found'&&extra){
+    var c=extra;
+    var rs=c.reason.split('|');var rh='';
+    rs.forEach(function(r){r=r.trim();rh+='<div class="ri-row"><span class="ri-src">AJ col</span><span>'+r+'</span></div>';});
+    var fc=c.result==='Conditional Review'?'fbM':c.result==='Additional Review'?'fbH':c.result==='Suspended'?'fbX':'fbL';
+    addB('<div class="res-block"><div class="rb-title">Underwriting Analysis · '+c.id+'</div>'+rh
+      +'<div style="margin-top:8px;padding-top:7px;border-top:1px solid rgba(0,0,0,0.08)">'
+      +'<span style="font-size:11px;color:#6B7280">AI col — Risk Score</span>'
+      +'<strong style="font-size:18px;color:'+(c.score>=56?'#D97706':c.score>=26?'#D97706':'#059669')+';margin-left:8px">'+c.score+' pts</strong></div>'
+      +'<div class="fb '+fc+'">'+c.result+'</div></div>',['conf','cov']);
+
+  } else {
+    // ── UNSTRUCTURED TEXT PATH ──
+    var lo=txt.toLowerCase();
+    var parsed=parseText(lo);
+
+    // ① Check hallucination trigger: Medsize vehicle size
+    if(parsed.vs==='Medsize'){
+      addB('<div class="halluc-ban">'
+        +'<div class="hb-title">⚠️ Hallucination Risk Detected — Human Review Required</div>'
+        +'<div class="hb-body">Vehicle Size <strong>Medsize</strong> was detected in the input.<br><br>'
+        +'The AI has self-detected a potential hallucination risk: the guideline scoring for Medsize vehicles assigns 0 points [3-2-B], which may lead the model to silently underweight ambiguous vehicle class combinations. '
+        +'To prevent scoring errors, this assessment has been flagged for mandatory human review.</div>'
+        +'<div class="hb-note">This case cannot be processed automatically. Please escalate to a senior underwriter for manual assessment.</div>'
+        +'</div>',['hb','hr','ab']);
+      return;
+    }
+
+    // ② Check if all 7 criteria are present
+    var missing=getMissing(parsed);
+    if(missing.length>0){
+      var missHtml='';
+      var allKeys=['lc','ca','cp','vc','vs','ins','loc'];
+      allKeys.forEach(function(k){
+        var ok=parsed[k]!==null;
+        missHtml+='<div class="mb-item'+(ok?' ok':'')+'">'+CRITERIA_LABELS[k]+(ok?' — Provided':'')+'</div>';
+      });
+      addB('<div class="missing-ban">'
+        +'<div class="mb-title">Insufficient Underwriting Criteria — Additional Input Required</div>'
+        +'<div style="font-size:11px;color:#1E40AF;margin-bottom:10px">All 7 scoring criteria are required before a risk score can be issued. Please provide the missing information below:</div>'
+        +missHtml
+        +'<div style="margin-top:10px;font-size:11px;color:#1E40AF;background:rgba(96,165,250,.12);padding:6px 10px;border-radius:6px">'
+        +'Please re-enter with all '+(missing.length)+' missing criteria included.</div>'
+        +'</div>',['conf']);
+      return;
+    }
+
+    // ③ All criteria present — run scoring
+    var res=scoreFromParsed(parsed);
+    var bdH='';
+    res.bd.forEach(function(b){
+      bdH+='<div class="sb-row">'
+        +'<span><strong>'+b.code+'</strong><span class="sb-rule"> '+b.src+'</span><br>'
+        +'<span style="color:#374151;font-weight:400">'+b.desc+'</span></span>'
+        +'<span style="font-weight:700;color:'+(b.pts>0?'#DC2626':'#6B7280')+'">'+(b.pts>0?'+'+b.pts+' pts':'0 pts')+'</span>'
+        +'</div>';
+    });
+    res.rules.forEach(function(rr){
+      bdH+='<div class="sb-row">'
+        +'<span><strong>'+rr.rule+'</strong><span class="sb-rule"> Composite Rule</span><br>'
+        +'<span style="color:#374151;font-weight:400">'+rr.desc+'</span></span>'
+        +'<span style="font-weight:700;color:#DC2626">+'+rr.pts+' pts</span>'
+        +'</div>';
+    });
+    var sc=res.score>=56?'#D97706':res.score>=26?'#D97706':'#059669';
+    bdH+='<div class="sb-row"><span style="font-weight:700">Total Score</span><span style="font-weight:700;color:'+sc+'">'+res.score+' pts</span></div>';
+
+    addB('<div class="res-block"><div class="rb-title">Underwriting Analysis · Unstructured Input (All 7 Criteria Met)</div>'
+      +'<div style="font-size:10px;color:#6B7280;margin-bottom:8px">100% based on Official Underwriting Guideline</div>'
+      +'<div class="score-breakdown">'+bdH+'</div>'
+      +'<div class="fb '+res.fbCls+'">'+res.result+'</div></div>',
+      ['conf','cov',res.score>=26?'hr':'hl']);
+  }
+}
+
+function addU(t){
+  var m=document.getElementById('msgs');
+  var d=document.createElement('div');d.className='msg-u-wrap';
+  d.innerHTML='<div class="msg-u">'+t+'</div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+function addB(html,badges){
+  var m=document.getElementById('msgs');
+  var cov=Math.round(50+cpT*0.5);
+  var bh='<div class="mbadges">';
+  if(badges.indexOf('conf')>=0) bh+='<span class="badge bG">Confidence Met</span>';
+  if(badges.indexOf('cov')>=0)  bh+='<span class="badge bB">Coverage '+cov+'%</span>';
+  if(badges.indexOf('hl')>=0)   bh+='<span class="badge bG">Halluc. Risk Low</span>';
+  if(badges.indexOf('hr')>=0)   bh+='<span class="badge bY">Human Review Advised</span>';
+  if(badges.indexOf('hb')>=0)   bh+='<span class="badge bP">Hallucination Detected</span>';
+  if(badges.indexOf('gb')>=0)   bh+='<span class="badge bR">Guide Deviation Blocked</span>';
+  if(badges.indexOf('ab')>=0)   bh+='<span class="badge bN">Auto-process Unavailable</span>';
+  bh+='<span class="badge bN">Threshold '+cpT+'%</span></div>';
+  var cm=cpT>=90?'Current threshold prioritizes high stability.':
+         cpT>=70?'Current settings apply approximately '+cov+'% coverage guarantee.':
+         'Current settings allow higher automation with some uncertainty.';
+  var d=document.createElement('div');d.className='msg-b-wrap';
+  d.innerHTML='<div class="msg-b">'+html+'</div><div class="mmeta">UnderAI · just now</div>'+bh+'<div class="cpn">'+cm+'</div>';
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+
+// ── CP SETTINGS ──
+function cpUpdate(v){
+  cpT=parseInt(v);
+  var aR=Math.max(10,Math.round(cpT*0.9-7));
+  var hR=100-aR,cov=Math.round(50+cpT*0.5),hal=100-cov;
+  document.getElementById('tv').textContent=v+'%';
+  document.getElementById('cp-t').textContent=v+'%';
+  document.getElementById('cp-c').textContent=cov+'%';
+  document.getElementById('cp-a').textContent=aR+'%';
+  document.getElementById('ar').textContent=aR+'%';
+  document.getElementById('hr').textContent=hR+'%';
+  document.getElementById('cr').textContent=cov+'%';
+  document.getElementById('hrc').textContent=hal+'%';
+  document.getElementById('dash-cov').textContent=cov+'%';
+  document.getElementById('erm-hal').textContent=hal+'%';
+  document.getElementById('erm-cov').textContent=cov+'%';
+  document.getElementById('erm-thresh').textContent=cpT+'%';
+  var ri=document.getElementById('ribox'),rl=document.getElementById('rilab');
+  ri.className=cpT>=85?'ribox riL':cpT>=70?'ribox riM':'ribox riH';
+  rl.textContent=cpT>=85?'Low Risk · High Stability':cpT>=70?'Medium Risk · Balanced':'High Risk · High Automation';
+  var db=document.getElementById('dbx');
+  db.className=cpT>=70?'dbx dbA':'dbx dbH';
+  db.innerHTML=cpT>=70
+    ?'<span style="font-size:18px">✅</span><div><div>Auto Approval Available</div><div style="font-size:10.5px;font-weight:400;margin-top:1px">Confidence threshold met</div></div>'
+    :'<span style="font-size:18px">👤</span><div><div>Human Review Required</div><div style="font-size:10.5px;font-weight:400;margin-top:1px">Risk exceeds threshold</div></div>';
+  var hm=document.getElementById('hm');hm.innerHTML='';
+  for(var i=0;i<10;i++){
+    var s=document.createElement('div');s.className='hms';
+    if(i<Math.round(hal/10))s.style.background=i<3?'#10B981':i<6?'#F59E0B':'#EF4444';
+    hm.appendChild(s);
+  }
+  var rf=document.getElementById('cp-rf');
+  rf.style.width=hal+'%';rf.style.background=hal<20?'#10B981':hal<40?'#F59E0B':'#EF4444';
+  var msg=cpT>=90?'Current threshold prioritizes high stability.':
+          cpT>=70?'Current settings apply approximately '+cov+'% coverage guarantee.':
+          'Current settings allow higher automation with some uncertainty.';
+  document.getElementById('cov-lbl').textContent=msg;
+  document.getElementById('cp-desc').textContent=msg;
+  document.getElementById('dash-cov-txt').textContent=msg;
+  document.getElementById('cb1').textContent='Threshold Met · '+Math.min(99,Math.round(aR*1.1))+'%';
+  document.getElementById('cb2').textContent='Review Needed '+hR+'%';
+  document.getElementById('cb3').textContent='Auto Active '+aR+'%';
+  drawCov(cpT);
+}
+
+function drawCov(t){
+  var c=document.getElementById('cc');if(!c)return;
+  c.width=c.parentElement.offsetWidth||300;c.height=170;
+  var ctx=c.getContext('2d'),w=c.width,h=c.height;
+  var L=38,R=12,T=14,B=28,aw=w-L-R,ah=h-T-B;
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#E5E7EB';ctx.lineWidth=0.5;
+  for(var i=0;i<=4;i++){
+    var y=T+(ah/4)*i;ctx.beginPath();ctx.moveTo(L,y);ctx.lineTo(L+aw,y);ctx.stroke();
+    ctx.fillStyle='#9CA3AF';ctx.font='9px Arial,sans-serif';ctx.textAlign='right';ctx.fillText((100-i*25)+'%',L-5,y+3);
+  }
+  ['50%','65%','80%','99%'].forEach(function(lb,i){
+    ctx.fillStyle='#9CA3AF';ctx.font='9px Arial,sans-serif';ctx.textAlign='center';ctx.fillText(lb,L+(aw/3)*i,h-8);
+  });
+  ctx.beginPath();
+  for(var x=0;x<=aw;x++){var tv=50+(x/aw)*49;var cv=50+tv*0.5;var cy=T+ah-(cv/100)*ah;if(x===0)ctx.moveTo(L+x,cy);else ctx.lineTo(L+x,cy);}
+  ctx.strokeStyle='#1A4FBF';ctx.lineWidth=2.5;ctx.stroke();
+  var tx=((t-50)/49)*aw;var tcov=50+t*0.5;var ty=T+ah-(tcov/100)*ah;
+  ctx.beginPath();ctx.arc(L+tx,ty,6,0,Math.PI*2);ctx.fillStyle='#1A4FBF';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#1A4FBF';ctx.font='bold 9.5px Arial,sans-serif';ctx.textAlign='center';ctx.fillText('Coverage '+Math.round(tcov)+'%',L+tx,ty-12);
+}
+
+// ── INIT ──
+fillAll();
+var hm=document.getElementById('hm');
+for(var i=0;i<10;i++){var s=document.createElement('div');s.className='hms';if(i<3)s.style.background='#10B981';hm.appendChild(s);}
+setTimeout(function(){drawCov(75);},80);
+window.addEventListener('resize',function(){drawCov(cpT);});
+</script>
+</body>
+</html>
